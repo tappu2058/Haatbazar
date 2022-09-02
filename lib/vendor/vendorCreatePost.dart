@@ -43,7 +43,12 @@ class _VendorCreatePostState extends State<VendorCreatePost> {
                 ),),
 
                 SizedBox(height: 15,),
-                DropdownButton(
+                DropdownButtonFormField(
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    )
+                  ),
                   hint: Text("Select Category"),
                   value: selectval,
                   onChanged: (value) {
@@ -59,6 +64,9 @@ class _VendorCreatePostState extends State<VendorCreatePost> {
                 TextFormField(
                   keyboardType: TextInputType.text,
                   decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15)
+                    ),
                     hintText: 'Product name',
                     labelText: 'Product',
                   ),
@@ -66,6 +74,9 @@ class _VendorCreatePostState extends State<VendorCreatePost> {
                 TextFormField(
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(15)
+                    ),
                     hintText: 'Product Price',
                     labelText: 'Price',
                   ),
@@ -73,6 +84,9 @@ class _VendorCreatePostState extends State<VendorCreatePost> {
                 TextFormField(
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(15)
+                    ),
                     hintText: 'Quantity',
                     labelText: 'Quantity',
                   ),

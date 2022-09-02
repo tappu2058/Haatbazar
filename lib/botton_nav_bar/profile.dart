@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:haatbazarv1/botton_nav_bar/register.dart';
-import 'package:haatbazarv1/botton_nav_bar/registerUser.dart';
-import 'package:haatbazarv1/botton_nav_bar/registerVendor.dart';
 import 'package:haatbazarv1/vendor/vendorBottomNav.dart';
 
 import '../admin/adminBottomNav.dart';
