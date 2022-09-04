@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class RegisterVendor extends StatefulWidget {
   const RegisterVendor({Key? key}) : super(key: key);
@@ -10,11 +11,11 @@ class RegisterVendor extends StatefulWidget {
 class _RegisterUserState extends State<RegisterVendor> {
   final _formkey = GlobalKey<FormState>();
 
-  final Fullnamecontroller = new TextEditingController();
-  final EmailController = new TextEditingController();
-  final phonecontroler = new TextEditingController();
-  final passwordcontroller = new TextEditingController();
-  final confirmpasswordcontroller = new TextEditingController();
+  final TextEditingController Fullnamecontroller = new TextEditingController();
+  final TextEditingController EmailController = new TextEditingController();
+  final TextEditingController phonecontroler = new TextEditingController();
+  final TextEditingController passwordcontroller = new TextEditingController();
+  final TextEditingController confirmpasswordcontroller = new TextEditingController();
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -58,7 +59,10 @@ class _RegisterUserState extends State<RegisterVendor> {
                   controller: EmailController,
                   validator: (value){
                     if(value!.isEmpty){
-                      return 'Enter your email';
+                      return ("Enter your email");
+                    }
+                    if(!RegExp("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]").hasMatch(value)){
+                      return ("Enter valid email address");
                     }
                     return null;
                   },
@@ -75,10 +79,16 @@ class _RegisterUserState extends State<RegisterVendor> {
                 //phone
                 TextFormField(
                   keyboardType: TextInputType.phone,
+                  inputFormatters: [
+                    LengthLimitingTextInputFormatter(10),
+                  ],
                   controller: phonecontroler,
                   validator: (value){
                     if(value!.isEmpty){
                       return 'Enter your phone number';
+                    }
+                    if(value.length!=10){
+                      return ("Mobile Number must be of 10 digit");
                     }
                     return null;
                   },
@@ -99,7 +109,10 @@ class _RegisterUserState extends State<RegisterVendor> {
                   controller: passwordcontroller,
                   validator: (value){
                     if(value!.isEmpty){
-                      return 'Enter password';
+                      return ("Enter your Password");
+                    }
+                    if (value.trim().length < 5) {
+                      return 'Password must be at least 6 characters in length';
                     }
                     return null;
                   },
@@ -120,7 +133,10 @@ class _RegisterUserState extends State<RegisterVendor> {
                   obscureText: true,
                   validator: (value){
                     if(value!.isEmpty){
-                      return 'Confirm your password';
+                      return "Re-enter password";
+                    }
+                    if(value!=passwordcontroller.text){
+                      return 'Password not match';
                     }
                     return null;
                   },
@@ -135,7 +151,9 @@ class _RegisterUserState extends State<RegisterVendor> {
                 ),
                 SizedBox(height: 20,),
                 MaterialButton(
-                  onPressed: (){},
+                  onPressed: (){
+                    _registervendor();
+                  },
                   child: Text("Register"),
                   color: Colors.orange,
                   height: 50,
@@ -149,5 +167,10 @@ class _RegisterUserState extends State<RegisterVendor> {
           ),
         )
     );
+  }
+  void _registervendor(){
+    if(_formkey.currentState!.validate()){
+
+    }
   }
 }
