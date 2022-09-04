@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:haatbazarv1/vendor/manageAccount.dart';
 import 'package:haatbazarv1/vendor/reportProblem.dart';
@@ -12,6 +13,10 @@ class VendorProfile extends StatefulWidget {
 }
 
 class _VendorProfileState extends State<VendorProfile> {
+  final uid = FirebaseAuth.instance.currentUser!.uid;
+  final email = FirebaseAuth.instance.currentUser!.email;
+  final phone = FirebaseAuth.instance.currentUser!.phoneNumber;
+  final fullname = FirebaseAuth.instance.currentUser!.displayName;
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -119,7 +124,7 @@ class _VendorProfileState extends State<VendorProfile> {
               ],
             ),
           ),
-          appBar: AppBar(title: Center(child: Text("Username")),
+          appBar: AppBar(title: Center(child: Text("$email")),
             backgroundColor: Colors.white, foregroundColor: Colors.black,),
           body: ListView(
             padding: EdgeInsets.all(15),
@@ -129,7 +134,7 @@ class _VendorProfileState extends State<VendorProfile> {
                   child: Icon(Icons.person,size: 60,)
               ),
               Center(
-                  child: Text("Username")
+                  child: Text('$phone'),
               ),
               SizedBox(height: 20,),
               Text("Our Products",textAlign: TextAlign.center,style: TextStyle(

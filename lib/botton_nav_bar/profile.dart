@@ -1,9 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:haatbazarv1/botton_nav_bar/forgetPass.dart';
 import 'package:haatbazarv1/botton_nav_bar/register.dart';
 import 'package:haatbazarv1/vendor/vendorBottomNav.dart';
-
 import '../admin/adminBottomNav.dart';
+
 class Myprofile extends StatefulWidget {
   const Myprofile({Key? key}) : super(key: key);
 
@@ -15,17 +16,11 @@ class _MyprofileState extends State<Myprofile> {
   bool _isObscure = true;
   final _formKey = GlobalKey<FormState>();
 
-  String _userEmail = '';
-  String _password = '';
+  var email = " ";
+  var password = " ";
+  final TextEditingController emailcontroller = new TextEditingController();
+  final TextEditingController passwordcontroller = new TextEditingController();
 
-  void _trySubmitForm() {
-    final bool? isValid = _formKey.currentState?.validate();
-    if (isValid == true) {
-      debugPrint('Everything looks good!');
-      debugPrint(_userEmail);
-      debugPrint(_password);
-    }
-  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,13 +47,12 @@ class _MyprofileState extends State<Myprofile> {
                       SizedBox(height: 20,),
                       /// Eamil
                       TextFormField(
+                        controller: emailcontroller,
                         decoration: InputDecoration(
-                            filled: true,
-                            fillColor: Colors.grey[200],
                             labelText: 'Email',
-                            prefixIcon: Icon(Icons.mail,color: Colors.grey,),
+                            prefixIcon: Icon(Icons.mail,color: Colors.orange,),
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10.0),
+                              borderRadius: BorderRadius.circular(20),
                             )
                         ),
                         validator: (value) {
@@ -72,17 +66,13 @@ class _MyprofileState extends State<Myprofile> {
                           // Return null if the entered email is valid
                           return null;
                         },
-                        onChanged: (value) => _userEmail = value,
                       ),
                       SizedBox(height: 20,),
-                      /// username
-
                       /// Password
                       TextFormField(
+                        controller: passwordcontroller,
                         decoration: InputDecoration(
-                            filled: true,
-                            fillColor: Colors.grey[200],
-                            prefixIcon: Icon(Icons.lock,color: Colors.grey,),
+                            prefixIcon: Icon(Icons.lock,color: Colors.orange,),
                             suffixIcon: IconButton(
                                 icon: Icon(
                                     _isObscure ? Icons.visibility : Icons.visibility_off),
@@ -93,7 +83,7 @@ class _MyprofileState extends State<Myprofile> {
                                 }),
                             labelText: 'Password',
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10.0),
+                              borderRadius: BorderRadius.circular(20),
                             )
                         ),
                         obscureText: _isObscure,
@@ -102,13 +92,12 @@ class _MyprofileState extends State<Myprofile> {
                           if (value == null || value.trim().isEmpty) {
                             return 'This field is required';
                           }
-                          if (value.trim().length < 8) {
-                            return 'Password must be at least 8 characters in length';
+                          if (value.trim().length < 6) {
+                            return 'Password must be at least 6 characters in length';
                           }
                           // Return null if the entered password is valid
                           return null;
                         },
-                        onChanged: (value) => _password = value,
                       ),
                       SizedBox(height: 20,),
 
@@ -120,7 +109,15 @@ class _MyprofileState extends State<Myprofile> {
                                 backgroundColor: Colors.orange,
                                 padding: EdgeInsets.all(16),
                               ),
-                              onPressed: _trySubmitForm,
+                              onPressed: (){
+                                if(_formKey.currentState!.validate()){
+                                  setState(() {
+                                    email = emailcontroller.text;
+                                    password = passwordcontroller.text;
+                                  });
+                                  userloin();
+                                }
+                              },
                               child: Text('Login',style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
@@ -161,35 +158,6 @@ class _MyprofileState extends State<Myprofile> {
                       ),
 
 
-                      //Text
-                      GestureDetector(
-                        onTap: (){
-                          Navigator.push(context,
-                            MaterialPageRoute(builder: (context)=>VendorBottomNav()),
-                          );
-                        },
-                        child: Center(
-                          child: Text("Vendor", style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold
-                          ),),
-                        ),
-                      ),
-
-                      GestureDetector(
-                        onTap: (){
-                          Navigator.push(context,
-                            MaterialPageRoute(builder: (context)=>VendorBottomNav()),
-                          );
-                        },
-                        child: Center(
-                          child: Text("User",style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                          ),),
-                        ),
-                      ),
-
                       SizedBox(height: 20,),
                       GestureDetector(
                         onTap: (){
@@ -207,4 +175,43 @@ class _MyprofileState extends State<Myprofile> {
 
     );
   }
+  userloin() async{
+    try{
+      await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>VendorBottomNav()),
+      );
+    }
+    on FirebaseException catch(error){
+      if(error.code == 'user-not-found'){
+        print("No user found");
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          backgroundColor: Colors.orange,
+          content: Text('No user found',style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),),
+        ),);
+      }
+      else if(error.code == 'wrong-password'){
+        print("Wrong password");
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Colors.orange,
+            content: Text('Wrong password',style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),),
+        ),);
+      }
+    }
+  }
+
+  @override
+  void deactivate() {
+    emailcontroller.dispose();
+    passwordcontroller.dispose();
+    super.deactivate();
+  }
+
+
+
 }

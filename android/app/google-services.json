@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1065914474260",
+    "project_id": "haatbazar-9412d",
+    "storage_bucket": "haatbazar-9412d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1065914474260:android:ca5dc5bd705f74b558ac01",
+        "android_client_info": {
+          "package_name": "com.example.haatbazarv1"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1065914474260-7hsbqohjk2nnufsvpa6rjgngkc9n5ke6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD1Ih9fNNQ9X62ZtzHznpW9Lkm-KBTIpHg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1065914474260-7hsbqohjk2nnufsvpa6rjgngkc9n5ke6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

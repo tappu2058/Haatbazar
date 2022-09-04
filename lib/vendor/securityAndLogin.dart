@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'changePassword.dart';
+
 class VendorSecurityAndLogin extends StatefulWidget {
   const VendorSecurityAndLogin({Key? key}) : super(key: key);
 
@@ -21,9 +23,16 @@ class _VendorSecurityAndLoginState extends State<VendorSecurityAndLogin> {
                 fontSize: 20,
               ),),
               SizedBox(height: 20,),
-              Text("Change Password",style: TextStyle(
-                fontSize: 21,
-              ),),
+              GestureDetector(
+                onTap: (){
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context)=>ChangePassword()),
+                  );
+                },
+                child: Text("Change Password",style: TextStyle(
+                  fontSize: 21,
+                ),),
+              ),
               SizedBox(height: 10,),
               Divider(color: Colors.black,),
               SizedBox(height: 10,),

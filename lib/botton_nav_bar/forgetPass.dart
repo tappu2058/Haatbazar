@@ -1,6 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:haatbazarv1/botton_nav_bar/forgetOTP.dart';
+import 'package:haatbazarv1/botton_nav_bar/profile.dart';
 class Forgetpass extends StatefulWidget {
   const Forgetpass({Key? key}) : super(key: key);
 
@@ -11,7 +12,8 @@ class Forgetpass extends StatefulWidget {
 class _ForgetpassState extends State<Forgetpass> {
 
   final _formkey = GlobalKey<FormState>();
-  final TextEditingController phonecontroler = new TextEditingController();
+  var email = " ";
+  final TextEditingController emailcontroller = new TextEditingController();
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -23,30 +25,29 @@ class _ForgetpassState extends State<Forgetpass> {
               padding: EdgeInsets.all(20),
               children: [
                 SizedBox(height: 50,),
-                Text("Enter your phone number",style: TextStyle(
+                Text("Reset link will be sent to your email ID",style: TextStyle(
                   fontSize: 30,
                   color: Colors.orange,
                 ),),
                 SizedBox(height: 20,),
                 TextFormField(
-                  keyboardType: TextInputType.phone,
-                  inputFormatters: [
-                    LengthLimitingTextInputFormatter(10),
-                  ],
-                  controller: phonecontroler,
-                  validator: (value){
-                    if(value!.isEmpty){
-                      return 'Enter your phone number';
+                  keyboardType: TextInputType.emailAddress,
+                  controller: emailcontroller,
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Please enter your email address';
                     }
-                    if(value.length!=10){
-                      return ("Mobile Number must be of 10 digit");
+                    // Check if the entered email has the right format
+                    if (!RegExp(r'\S+@\S+\.\S+').hasMatch(value)) {
+                      return 'Please enter a valid email address';
                     }
+                    // Return null if the entered email is valid
                     return null;
                   },
                   decoration: InputDecoration(
-                      hintText: 'Phone number',
-                      labelText: 'Phone number',
-                      prefixIcon: Icon(Icons.phone,color: Colors.orange,),
+                      hintText: 'Email',
+                      labelText: 'Email',
+                      prefixIcon: Icon(Icons.mail,color: Colors.orange,),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20),
                       )
@@ -55,7 +56,12 @@ class _ForgetpassState extends State<Forgetpass> {
                 SizedBox(height: 20,),
                 MaterialButton(
                   onPressed: (){
-                    _forgetpass();
+                    if(_formkey.currentState!.validate()){
+                      setState(() {
+                        email = emailcontroller.text;
+                      });
+                      resetPassword();
+                    }
 
                   },
                   child: Text("Submit",style: TextStyle(
@@ -75,11 +81,38 @@ class _ForgetpassState extends State<Forgetpass> {
         )
     );
   }
-  void _forgetpass(){
-    if(_formkey.currentState!.validate()){
-      Navigator.push(context,
-        MaterialPageRoute(builder: (context)=>OTPforgetpass()),
+
+
+  resetPassword() async{
+    try{
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        backgroundColor: Colors.orange,
+        content: Text('Password reset email has been sent',style: TextStyle(
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),),
+      ));
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Myprofile(),),
       );
     }
+    on FirebaseException catch(error){
+      if(error.code == 'user-not-found'){
+        print("User not found");
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          backgroundColor: Colors.orange,
+          content: Text('User not found',style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),),
+        ));
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    emailcontroller.dispose();
+    super.dispose();
   }
 }

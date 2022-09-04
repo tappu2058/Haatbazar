@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:haatbazarv1/botton_nav_bar/profile.dart';
 
 class RegisterUser extends StatefulWidget {
   const RegisterUser({Key? key}) : super(key: key);
@@ -10,6 +12,12 @@ class RegisterUser extends StatefulWidget {
 
 class _RegisterUserState extends State<RegisterUser> {
   final _formkey = GlobalKey<FormState>();
+
+  var fullname = " ";
+  var email = " ";
+  var phone = " ";
+  var password = " ";
+  var confirmpass = " ";
 
   final TextEditingController  Fullnamecontroller = new TextEditingController();
   final TextEditingController  EmailController = new TextEditingController();
@@ -152,7 +160,16 @@ class _RegisterUserState extends State<RegisterUser> {
                 SizedBox(height: 20,),
                 MaterialButton(
                     onPressed: (){
-                      _register();
+                      if(_formkey.currentState!.validate()){
+                        setState(() {
+                          email = EmailController.text;
+                          password = passwordcontroller.text;
+                          confirmpass = confirmpasswordcontroller.text;
+                          fullname = Fullnamecontroller.text;
+                          phone = phonecontroler.text;
+                        });
+                        register();
+                      }
                     },
                   child: Text("Register",style: TextStyle(
                     color: Colors.white,
@@ -173,9 +190,56 @@ class _RegisterUserState extends State<RegisterUser> {
     );
 
   }
-  void _register(){
-    if(_formkey.currentState!.validate()){
 
+
+  register() async{
+    if(password == confirmpass){
+      try{
+        UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
+        print(userCredential);
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Colors.orange,
+            content: Text("Register successfully",style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.white
+            ),),
+        ));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Myprofile(),),
+        );
+      }
+      on FirebaseException catch(error){
+        if(error.code == 'weak-password'){
+          print("Weak password");
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Colors.orange,
+            content: Text("Weak password",style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.white
+            ),),
+          ));
+
+        }
+        else if(error.code == 'email-already-in-use'){
+          print("Account is already exist");
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Colors.orange,
+            content: Text("Account is already exist",style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.white
+            ),),
+          ));
+        }
     }
+    }
+  }
+
+  @override
+  void dispose() {
+    EmailController.dispose();
+    passwordcontroller.dispose();
+    confirmpasswordcontroller.dispose();
+    Fullnamecontroller.dispose();
+    phonecontroler.dispose();
+    super.dispose();
   }
 }
