@@ -138,7 +138,12 @@ class _RegisterUserState extends State<RegisterUser> {
                     onPressed: (){},
                   child: Text("Register"),
                   color: Colors.orange,
-                )
+                  height: 50,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+
+                  ),
               ],
             ),
           ),
