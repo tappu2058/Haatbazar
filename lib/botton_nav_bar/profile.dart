@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:haatbazarv1/botton_nav_bar/forgetPass.dart';
 import 'package:haatbazarv1/botton_nav_bar/register.dart';
 import 'package:haatbazarv1/vendor/vendorBottomNav.dart';
 
@@ -116,10 +117,17 @@ class _MyprofileState extends State<Myprofile> {
                               ),))),
                       SizedBox(height: 20,),
                       //forget password
-                      Text("Forget Password",style: TextStyle(
-                        color: Colors.deepOrange,
-                        fontSize: 17,
-                      ),),
+                      GestureDetector(
+                        onTap: (){
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context)=>Forgetpass()),
+                          );
+                        },
+                        child: Text("Forget Password",style: TextStyle(
+                          color: Colors.orange,
+                          fontSize: 17,
+                        ),),
+                      ),
 
                       SizedBox(height: 20,),
                       Row(
