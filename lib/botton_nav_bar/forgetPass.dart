@@ -58,7 +58,11 @@ class _ForgetpassState extends State<Forgetpass> {
                     _forgetpass();
 
                   },
-                  child: Text("Submit"),
+                  child: Text("Submit",style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),),
                   color: Colors.orange,
                   height: 50,
                   shape: RoundedRectangleBorder(

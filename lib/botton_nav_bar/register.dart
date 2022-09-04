@@ -46,7 +46,7 @@ class _RegisterState extends State<Register> {
                             padding: EdgeInsets.all(16),
                             width: MediaQuery.of(context).size.width*0.8,
                             decoration: BoxDecoration(
-                              color: Colors.deepPurple,
+                              color: Colors.orange,
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Center(
@@ -73,7 +73,7 @@ class _RegisterState extends State<Register> {
                             padding: EdgeInsets.all(16),
                             width: MediaQuery.of(context).size.width*0.8,
                             decoration: BoxDecoration(
-                              color: Colors.deepPurple,
+                              color: Colors.orange,
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Center(

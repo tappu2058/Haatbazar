@@ -36,9 +36,20 @@ class _MyprofileState extends State<Myprofile> {
               padding: const EdgeInsets.all(20),
               child: Form(
                   key: _formKey,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
+                  child: ListView(
                     children: [
+                      SizedBox(height: 80,),
+                      Text("Welcome back",style: TextStyle(
+                        color: Colors.orange,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 26,
+                      ),),
+                      Text("Login",style: TextStyle(
+                        color: Colors.orange,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 26,
+                      ),),
+                      SizedBox(height: 20,),
                       /// Eamil
                       TextFormField(
                         decoration: InputDecoration(
@@ -106,7 +117,7 @@ class _MyprofileState extends State<Myprofile> {
                           width: MediaQuery.of(context).size.width*0.9,
                           child: OutlinedButton(
                               style: OutlinedButton.styleFrom(
-                                backgroundColor: Colors.indigo,
+                                backgroundColor: Colors.orange,
                                 padding: EdgeInsets.all(16),
                               ),
                               onPressed: _trySubmitForm,
@@ -123,10 +134,12 @@ class _MyprofileState extends State<Myprofile> {
                               MaterialPageRoute(builder: (context)=>Forgetpass()),
                           );
                         },
-                        child: Text("Forget Password",style: TextStyle(
-                          color: Colors.orange,
-                          fontSize: 17,
-                        ),),
+                        child: Center(
+                          child: Text("Forget Password",style: TextStyle(
+                            color: Colors.orange,
+                            fontSize: 17,
+                          ),),
+                        ),
                       ),
 
                       SizedBox(height: 20,),
@@ -141,7 +154,7 @@ class _MyprofileState extends State<Myprofile> {
                               );
                             },
                             child: Text("Click here",style: TextStyle(
-                              color: Colors.deepOrange,
+                              color: Colors.orange,
                             ),),
                           ),
                         ],
@@ -155,10 +168,12 @@ class _MyprofileState extends State<Myprofile> {
                             MaterialPageRoute(builder: (context)=>VendorBottomNav()),
                           );
                         },
-                        child: Text("Vendor", style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold
-                        ),),
+                        child: Center(
+                          child: Text("Vendor", style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold
+                          ),),
+                        ),
                       ),
 
                       GestureDetector(
@@ -167,10 +182,12 @@ class _MyprofileState extends State<Myprofile> {
                             MaterialPageRoute(builder: (context)=>VendorBottomNav()),
                           );
                         },
-                        child: Text("User",style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                        ),),
+                        child: Center(
+                          child: Text("User",style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                          ),),
+                        ),
                       ),
 
                       SizedBox(height: 20,),

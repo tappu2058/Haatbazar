@@ -111,7 +111,7 @@ class _RegisterUserState extends State<RegisterUser> {
                     if(value!.isEmpty){
                       return ("Enter your Password");
                     }
-                    if (value.trim().length < 5) {
+                    if (value.trim().length < 6) {
                       return 'Password must be at least 6 characters in length';
                     }
                     return null;
@@ -154,7 +154,11 @@ class _RegisterUserState extends State<RegisterUser> {
                     onPressed: (){
                       _register();
                     },
-                  child: Text("Register"),
+                  child: Text("Register",style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),),
                   color: Colors.orange,
                   height: 50,
                   shape: RoundedRectangleBorder(

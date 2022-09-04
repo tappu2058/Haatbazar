@@ -77,7 +77,11 @@ class _RecoverPasswordState extends State<RecoverPassword> {
 
 
                   },
-                  child: Text("Register"),
+                  child: Text("Reset",style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),),
                   color: Colors.orange,
                   height: 50,
                   shape: RoundedRectangleBorder(
