@@ -1,52 +1,51 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:haatbazarv1/botton_nav_bar/forgetOTP.dart';
-class Forgetpass extends StatefulWidget {
-  const Forgetpass({Key? key}) : super(key: key);
+import 'package:haatbazarv1/botton_nav_bar/recoverpassword.dart';
+
+class OTPforgetpass extends StatefulWidget {
+  const OTPforgetpass({Key? key}) : super(key: key);
 
   @override
-  State<Forgetpass> createState() => _ForgetpassState();
+  State<OTPforgetpass> createState() => _OTPforgetpassState();
 }
 
-class _ForgetpassState extends State<Forgetpass> {
+class _OTPforgetpassState extends State<OTPforgetpass> {
 
   final _formkey = GlobalKey<FormState>();
   final TextEditingController phonecontroler = new TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
-          appBar: AppBar(title: Text("Forget Password"),backgroundColor: Colors.white,foregroundColor: Colors.orange,),
+          appBar: AppBar(title: Text("OTP"),backgroundColor: Colors.white,foregroundColor: Colors.orange,),
           body: Form(
             key: _formkey,
             child: ListView(
               padding: EdgeInsets.all(20),
               children: [
-                SizedBox(height: 50,),
-                Text("Enter your phone number",style: TextStyle(
-                  fontSize: 30,
-                  color: Colors.orange,
-                ),),
+                SizedBox(height: 50),
+                Text("Enter OTP",style: TextStyle(fontSize: 30,color: Colors.orange),),
                 SizedBox(height: 20,),
                 TextFormField(
-                  keyboardType: TextInputType.phone,
+                  keyboardType: TextInputType.number,
                   inputFormatters: [
-                    LengthLimitingTextInputFormatter(10),
+                    LengthLimitingTextInputFormatter(4),
                   ],
                   controller: phonecontroler,
                   validator: (value){
                     if(value!.isEmpty){
-                      return 'Enter your phone number';
+                      return 'Enter OTP';
                     }
-                    if(value.length!=10){
-                      return ("Mobile Number must be of 10 digit");
+                    if(value.length!=4){
+                      return ("OTP must be of 4 digit");
                     }
                     return null;
                   },
                   decoration: InputDecoration(
-                      hintText: 'Phone number',
-                      labelText: 'Phone number',
-                      prefixIcon: Icon(Icons.phone,color: Colors.orange,),
+                      hintText: 'OTP',
+                      labelText: 'Enter OTP',
+                      prefixIcon: Icon(Icons.numbers,color: Colors.orange,),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20),
                       )
@@ -55,7 +54,7 @@ class _ForgetpassState extends State<Forgetpass> {
                 SizedBox(height: 20,),
                 MaterialButton(
                   onPressed: (){
-                    _forgetpass();
+                    _OTPforgetpass();
 
                   },
                   child: Text("Submit"),
@@ -71,10 +70,10 @@ class _ForgetpassState extends State<Forgetpass> {
         )
     );
   }
-  void _forgetpass(){
+  void _OTPforgetpass(){
     if(_formkey.currentState!.validate()){
       Navigator.push(context,
-        MaterialPageRoute(builder: (context)=>OTPforgetpass()),
+        MaterialPageRoute(builder: (context)=>RecoverPassword()),
       );
     }
   }
