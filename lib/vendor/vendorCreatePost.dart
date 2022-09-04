@@ -12,6 +12,12 @@ class VendorCreatePost extends StatefulWidget {
 }
 
 class _VendorCreatePostState extends State<VendorCreatePost> {
+  final TextEditingController addproduct = new TextEditingController();
+  final TextEditingController addprice = new TextEditingController();
+  final TextEditingController addquantity = new TextEditingController();
+  final TextEditingController addimage = new TextEditingController();
+
+  final _formkey = GlobalKey<FormState>();
 
   List<String> listitems = ["Clothes", "Agriculture","Brauty & Personal Care","Food & Beverage"
       "Furniture","Gifts & Crafts","Electronic","Health & Medical","Machinery","Jewelry","Tools & Hardware"];
@@ -33,107 +39,140 @@ class _VendorCreatePostState extends State<VendorCreatePost> {
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
-          body: ListView(
-              padding: EdgeInsets.all(20),
-              children: [
-                SizedBox(height: 25,),
-                Text("Create your post",style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 21,
-                ),),
+          body: Form(
+            key: _formkey,
+            child: ListView(
+                padding: EdgeInsets.all(20),
+                children: [
+                  SizedBox(height: 25,),
+                  Text("Create your post",style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 21,
+                  ),),
 
-                SizedBox(height: 15,),
-                DropdownButtonFormField(
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    )
-                  ),
-                  hint: Text("Select Category"),
-                  value: selectval,
-                  onChanged: (value) {
-                    setState(() {
-                      selectval = value.toString();
-                    });
-                  },
-                  items: listitems.map((itemone) {
-                    return DropdownMenuItem(value: itemone, child: Text(itemone));
-                  }).toList(),
-                ),
-                SizedBox(height: 15,),
-                TextFormField(
-                  keyboardType: TextInputType.text,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(15)
+                  SizedBox(height: 15,),
+                  DropdownButtonFormField(
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      )
                     ),
-                    hintText: 'Product name',
-                    labelText: 'Product',
+                    hint: Text("Select Category"),
+                    value: selectval,
+                    onChanged: (value) {
+                      setState(() {
+                        selectval = value.toString();
+                      });
+                    },
+                    items: listitems.map((itemone) {
+                      return DropdownMenuItem(value: itemone, child: Text(itemone));
+                    }).toList(),
                   ),
-                ),
-                TextFormField(
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
+                  SizedBox(height: 15,),
+                  TextFormField(
+                    keyboardType: TextInputType.text,
+                    controller: addproduct,
+                    validator: (value){
+                      if(value!.isEmpty){
+                        return 'Enter prodect name';
+                      }
+                    },
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(15)
+                      ),
+                      hintText: 'Product name',
+                      labelText: 'Product',
                     ),
-                    hintText: 'Product Price',
-                    labelText: 'Price',
                   ),
-                ),
-                TextFormField(
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15)
+                  SizedBox(height: 15,),
+                  TextFormField(
+                    keyboardType: TextInputType.number,
+                    controller: addprice,
+                    validator: (value){
+                      if(value!.isEmpty){
+                        return 'Enter price';
+                      }
+                    },
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15)
+                      ),
+                      hintText: 'Product Price',
+                      labelText: 'Price',
                     ),
-                    hintText: 'Quantity',
-                    labelText: 'Quantity',
                   ),
-                ),
+                  SizedBox(height: 15,),
+                  TextFormField(
+                    keyboardType: TextInputType.number,
+                    controller: addquantity,
+                    validator: (value){
+                      if(value!.isEmpty){
+                        return 'Enter quentity';
+                      }
+                    },
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15)
+                      ),
+                      hintText: 'Quantity',
+                      labelText: 'Quantity',
+                    ),
+                  ),
+                  SizedBox(height: 15,),
+                  MaterialButton(
+                      color: Colors.blue,
+                      child: const Text(
+                          "Pick Images from Gallery",
+                          style: TextStyle(
+                              color: Colors.white70, fontWeight: FontWeight.bold
+                          )
+                      ),
+                      onPressed: () {
+                        selectImages();
+                      }
+                  ),
 
-                MaterialButton(
-                    color: Colors.blue,
-                    child: const Text(
-                        "Pick Images from Gallery",
-                        style: TextStyle(
-                            color: Colors.white70, fontWeight: FontWeight.bold
+                  Container(
+                    child: Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: GridView.builder(
+                            scrollDirection: Axis.vertical,
+                              shrinkWrap: true,
+                              itemCount: imageFileList!.length,
+                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 3
+                              ),
+                              itemBuilder: (BuildContext context, int index) {
+                                // return FileImage(File(imageFileList![index].path));
+                                return Image.file(File(imageFileList![index].path), fit: BoxFit.cover,);
+                              }
+                          ),
                         )
                     ),
-                    onPressed: () {
-                      selectImages();
-                    }
-                ),
-                SizedBox(height: 20,),
-                Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: GridView.builder(
-                        scrollDirection: Axis.vertical,
-                          shrinkWrap: true,
-                          itemCount: imageFileList!.length,
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 3
-                          ),
-                          itemBuilder: (BuildContext context, int index) {
-                            // return FileImage(File(imageFileList![index].path));
-                            return Image.file(File(imageFileList![index].path), fit: BoxFit.cover);
-                          }
-                      ),
-                    )
-                ),
+                  ),
 
-                MaterialButton(
-                  color: Colors.orange,
-                  onPressed: (){},
-                    child: Text("Post",style: TextStyle(
-                      fontSize: 19
-                    ),)
-                ),
-              ]
+                  MaterialButton(
+                    color: Colors.orange,
+                    onPressed: (){
+                      post();
+                    },
+                      child: Text("Post",style: TextStyle(
+                        fontSize: 19
+                      ),)
+                  ),
+                ]
+            ),
           ),
         )
     );
+  }
+
+  void post(){
+    if(_formkey.currentState!.validate()){
+
+    }
   }
 }
 
