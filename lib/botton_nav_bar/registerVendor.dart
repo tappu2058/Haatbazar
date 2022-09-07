@@ -1,5 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:haatbazarv1/botton_nav_bar/profile.dart';
+
+import '../model/UserData.dart';
 
 class RegisterVendor extends StatefulWidget {
   const RegisterVendor({Key? key}) : super(key: key);
@@ -9,6 +15,8 @@ class RegisterVendor extends StatefulWidget {
 }
 
 class _RegisterUserState extends State<RegisterVendor> {
+  bool _isObscure1 = true;
+  bool _isObscure = true;
   final _formkey = GlobalKey<FormState>();
 
   final TextEditingController Fullnamecontroller = new TextEditingController();
@@ -16,6 +24,8 @@ class _RegisterUserState extends State<RegisterVendor> {
   final TextEditingController phonecontroler = new TextEditingController();
   final TextEditingController passwordcontroller = new TextEditingController();
   final TextEditingController confirmpasswordcontroller = new TextEditingController();
+
+  final auth = FirebaseAuth.instance;
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -105,7 +115,7 @@ class _RegisterUserState extends State<RegisterVendor> {
                 //password
                 TextFormField(
                   keyboardType: TextInputType.text,
-                  obscureText: true,
+                  obscureText: _isObscure,
                   controller: passwordcontroller,
                   validator: (value){
                     if(value!.isEmpty){
@@ -117,6 +127,14 @@ class _RegisterUserState extends State<RegisterVendor> {
                     return null;
                   },
                   decoration: InputDecoration(
+                      suffixIcon: IconButton(
+                          icon: Icon(
+                            _isObscure ? Icons.visibility : Icons.visibility_off,color: Colors.orange,),
+                          onPressed: () {
+                            setState(() {
+                              _isObscure = !_isObscure;
+                            });
+                          }),
                       hintText: 'Password',
                       labelText: 'password',
                       prefixIcon: Icon(Icons.lock,color: Colors.orange,),
@@ -130,7 +148,7 @@ class _RegisterUserState extends State<RegisterVendor> {
                 TextFormField(
                   keyboardType: TextInputType.text,
                   controller: confirmpasswordcontroller,
-                  obscureText: true,
+                  obscureText: _isObscure1,
                   validator: (value){
                     if(value!.isEmpty){
                       return "Re-enter password";
@@ -141,6 +159,14 @@ class _RegisterUserState extends State<RegisterVendor> {
                     return null;
                   },
                   decoration: InputDecoration(
+                      suffixIcon: IconButton(
+                          icon: Icon(
+                            _isObscure1 ? Icons.visibility : Icons.visibility_off,color: Colors.orange,),
+                          onPressed: () {
+                            setState(() {
+                              _isObscure1 = !_isObscure1;
+                            });
+                          }),
                       hintText: 'Confirm password',
                       labelText: 'Confirm password',
                       prefixIcon: Icon(Icons.person_rounded,color: Colors.orange,),
@@ -152,7 +178,7 @@ class _RegisterUserState extends State<RegisterVendor> {
                 SizedBox(height: 20,),
                 MaterialButton(
                   onPressed: (){
-                    _registervendor();
+                    SignUp(EmailController.text, passwordcontroller.text);
                   },
                   child: Text("Register",style: TextStyle(
                     color: Colors.white,
@@ -172,9 +198,73 @@ class _RegisterUserState extends State<RegisterVendor> {
         )
     );
   }
-  void _registervendor(){
-    if(_formkey.currentState!.validate()){
 
+  void SignUp(String email, String password) async {
+    if (_formkey.currentState!.validate()) {
+      await auth.createUserWithEmailAndPassword(
+          email: email, password: password)
+          .then((value) =>
+      {
+        postDetailsToFirestore()
+      }).catchError((error) {
+        if (error.code == 'weak-password') {
+          print("Weak password");
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Colors.orange,
+            content: Text("Weak password", style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.white
+            ),),
+          ));
+        }
+        else if (error.code == 'email-already-in-use') {
+          print("Account is already exist");
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Colors.orange,
+            content: Text("Account is already exist", style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.white
+            ),),
+          ));
+        }
+        else{
+          print("Login failed. Please try again.");
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Colors.orange,
+            content: Text('Login failed. Please try again.',style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),),
+          ),);
+        }
+      });
     }
+  }
+
+  postDetailsToFirestore() async{
+    //calling firestore
+    //callingusermodel
+    //sending values
+    FirebaseFirestore firebasefirestore = FirebaseFirestore.instance;
+    User? user = auth.currentUser;
+
+    UserModel usermodel = UserModel();
+    //writing all values
+
+    usermodel.Email = user!.email;
+    usermodel.Uid = user.uid;
+    usermodel.Fullname = Fullnamecontroller.text;
+    usermodel.Phone = phonecontroler.text;
+    usermodel.Password = passwordcontroller.text;
+    usermodel.Wrole = 'Vendor';
+
+    await firebasefirestore
+        .collection("users")
+        .doc(user.uid)
+        .set(usermodel.toMap());
+    Fluttertoast.showToast(msg: "Account Create Successfully");
+    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>Myprofile()),
+            (route) => false);
+
   }
 }

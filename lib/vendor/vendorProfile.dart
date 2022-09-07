@@ -134,7 +134,7 @@ class _VendorProfileState extends State<VendorProfile> {
                   child: Icon(Icons.person,size: 60,)
               ),
               Center(
-                  child: Text('$phone'),
+                  child: Text('$email'),
               ),
               SizedBox(height: 20,),
               Text("Our Products",textAlign: TextAlign.center,style: TextStyle(

@@ -1,9 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:haatbazarv1/botton_nav_bar/forgetPass.dart';
 import 'package:haatbazarv1/botton_nav_bar/register.dart';
 import 'package:haatbazarv1/vendor/vendorBottomNav.dart';
 import '../admin/adminBottomNav.dart';
+import '../user/userBottomNavBar.dart';
 
 class Myprofile extends StatefulWidget {
   const Myprofile({Key? key}) : super(key: key);
@@ -13,6 +15,8 @@ class Myprofile extends StatefulWidget {
 }
 
 class _MyprofileState extends State<Myprofile> {
+
+
   bool _isObscure = true;
   final _formKey = GlobalKey<FormState>();
 
@@ -20,6 +24,9 @@ class _MyprofileState extends State<Myprofile> {
   var password = " ";
   final TextEditingController emailcontroller = new TextEditingController();
   final TextEditingController passwordcontroller = new TextEditingController();
+
+  final name = FirebaseAuth.instance.currentUser!.displayName;
+
 
   @override
   Widget build(BuildContext context) {
@@ -178,8 +185,17 @@ class _MyprofileState extends State<Myprofile> {
   userloin() async{
     try{
       await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>VendorBottomNav()),
-      );
+      if(['Wrole']=='admin'){
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>AdminBottomNav()));
+      }
+      else if(['Wrole']=='User'){
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>UserBottomNavBar()),);
+      }
+      else {
+        Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => VendorBottomNav()),
+        );
+      }
     }
     on FirebaseException catch(error){
       if(error.code == 'user-not-found'){
@@ -200,6 +216,16 @@ class _MyprofileState extends State<Myprofile> {
               color: Colors.white,
               fontWeight: FontWeight.bold,
             ),),
+        ),);
+      }
+      else{
+        print("Login failed. Please try again.");
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          backgroundColor: Colors.orange,
+          content: Text('Login failed. Please try again.',style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),),
         ),);
       }
     }

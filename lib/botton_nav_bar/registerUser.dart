@@ -1,7 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:haatbazarv1/botton_nav_bar/profile.dart';
+import '../model/UserData.dart';
 
 class RegisterUser extends StatefulWidget {
   const RegisterUser({Key? key}) : super(key: key);
@@ -11,19 +14,18 @@ class RegisterUser extends StatefulWidget {
 }
 
 class _RegisterUserState extends State<RegisterUser> {
+
+   bool _isObscure = true;
+   bool _isObscure1 = true;
   final _formkey = GlobalKey<FormState>();
 
-  var fullname = " ";
-  var email = " ";
-  var phone = " ";
-  var password = " ";
-  var confirmpass = " ";
 
   final TextEditingController  Fullnamecontroller = new TextEditingController();
   final TextEditingController  EmailController = new TextEditingController();
   final TextEditingController  phonecontroler = new TextEditingController();
   final TextEditingController  passwordcontroller = new TextEditingController();
   final TextEditingController  confirmpasswordcontroller = new TextEditingController();
+  final auth = FirebaseAuth.instance;
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -113,7 +115,7 @@ class _RegisterUserState extends State<RegisterUser> {
                 //password
                 TextFormField(
                   keyboardType: TextInputType.text,
-                  obscureText: true,
+                  obscureText: _isObscure,
                   controller: passwordcontroller,
                   validator: (value){
                     if(value!.isEmpty){
@@ -125,6 +127,14 @@ class _RegisterUserState extends State<RegisterUser> {
                     return null;
                   },
                   decoration: InputDecoration(
+                      suffixIcon: IconButton(
+                          icon: Icon(
+                              _isObscure ? Icons.visibility : Icons.visibility_off,color: Colors.orange,),
+                          onPressed: () {
+                            setState(() {
+                              _isObscure = !_isObscure;
+                            });
+                          }),
                       hintText: 'Password',
                       labelText: 'password',
                       prefixIcon: Icon(Icons.lock,color: Colors.orange,),
@@ -138,7 +148,7 @@ class _RegisterUserState extends State<RegisterUser> {
                 TextFormField(
                   keyboardType: TextInputType.text,
                   controller: confirmpasswordcontroller,
-                  obscureText: true,
+                  obscureText: _isObscure1,
                   validator: (value){
                     if(value!.isEmpty){
                       return "Re-enter password";
@@ -149,6 +159,14 @@ class _RegisterUserState extends State<RegisterUser> {
                     return null;
                   },
                   decoration: InputDecoration(
+                      suffixIcon: IconButton(
+                          icon: Icon(
+                              _isObscure1 ? Icons.visibility : Icons.visibility_off,color: Colors.orange,),
+                          onPressed: () {
+                            setState(() {
+                              _isObscure1 = !_isObscure1;
+                            });
+                          }),
                       hintText: 'Confirm password',
                       labelText: 'Confirm password',
                       prefixIcon: Icon(Icons.person_rounded,color: Colors.orange,),
@@ -160,17 +178,8 @@ class _RegisterUserState extends State<RegisterUser> {
                 SizedBox(height: 20,),
                 MaterialButton(
                     onPressed: (){
-                      if(_formkey.currentState!.validate()){
-                        setState(() {
-                          email = EmailController.text;
-                          password = passwordcontroller.text;
-                          confirmpass = confirmpasswordcontroller.text;
-                          fullname = Fullnamecontroller.text;
-                          phone = phonecontroler.text;
-                        });
-                        register();
-                      }
-                    },
+                      SignUp(EmailController.text, passwordcontroller.text);
+                      },
                   child: Text("Register",style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -192,54 +201,114 @@ class _RegisterUserState extends State<RegisterUser> {
   }
 
 
-  register() async{
-    if(password == confirmpass){
-      try{
-        UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
-        print(userCredential);
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            backgroundColor: Colors.orange,
-            content: Text("Register successfully",style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Colors.white
-            ),),
-        ));
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Myprofile(),),
-        );
-      }
-      on FirebaseException catch(error){
-        if(error.code == 'weak-password'){
+  // register() async{
+  //   if(password == confirmpass){
+  //     try{
+  //       UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
+  //       print(userCredential);
+  //       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+  //           backgroundColor: Colors.orange,
+  //           content: Text("Register successfully",style: TextStyle(
+  //             fontWeight: FontWeight.bold,
+  //             color: Colors.white
+  //           ),),
+  //       ));
+  //       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Myprofile(),),
+  //       );
+  //     }
+  //     on FirebaseException catch(error){
+  //       if(error.code == 'weak-password'){
+  //         print("Weak password");
+  //         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+  //           backgroundColor: Colors.orange,
+  //           content: Text("Weak password",style: TextStyle(
+  //               fontWeight: FontWeight.bold,
+  //               color: Colors.white
+  //           ),),
+  //         ));
+  //
+  //       }
+  //       else if(error.code == 'email-already-in-use'){
+  //         print("Account is already exist");
+  //         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+  //           backgroundColor: Colors.orange,
+  //           content: Text("Account is already exist",style: TextStyle(
+  //               fontWeight: FontWeight.bold,
+  //               color: Colors.white
+  //           ),),
+  //         ));
+  //       }
+  //   }
+  //   }
+  //
+  // }
+
+  void SignUp(String email, String password) async {
+    if (_formkey.currentState!.validate()) {
+      await auth.createUserWithEmailAndPassword(
+          email: email, password: password)
+          .then((value) =>
+      {
+        postDetailsToFirestore()
+      }).catchError((error) {
+        if (error.code == 'weak-password') {
           print("Weak password");
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             backgroundColor: Colors.orange,
-            content: Text("Weak password",style: TextStyle(
+            content: Text("Weak password", style: TextStyle(
                 fontWeight: FontWeight.bold,
                 color: Colors.white
             ),),
           ));
-
         }
-        else if(error.code == 'email-already-in-use'){
+        else if (error.code == 'email-already-in-use') {
           print("Account is already exist");
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             backgroundColor: Colors.orange,
-            content: Text("Account is already exist",style: TextStyle(
+            content: Text("Account is already exist", style: TextStyle(
                 fontWeight: FontWeight.bold,
                 color: Colors.white
             ),),
           ));
         }
-    }
+        else{
+          print("Login failed. Please try again.");
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Colors.orange,
+            content: Text('Login failed. Please try again.',style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),),
+          ),);
+        }
+      });
     }
   }
 
-  @override
-  void dispose() {
-    EmailController.dispose();
-    passwordcontroller.dispose();
-    confirmpasswordcontroller.dispose();
-    Fullnamecontroller.dispose();
-    phonecontroler.dispose();
-    super.dispose();
+  postDetailsToFirestore() async{
+    //calling firestore
+    //callingusermodel
+    //sending values
+    FirebaseFirestore firebasefirestore = FirebaseFirestore.instance;
+    User? user = auth.currentUser;
+
+    UserModel usermodel = UserModel();
+    //writing all values
+
+    usermodel.Email = user!.email;
+    usermodel.Uid = user.uid;
+    usermodel.Fullname = Fullnamecontroller.text;
+    usermodel.Phone = phonecontroler.text;
+    usermodel.Password = passwordcontroller.text;
+    usermodel.Wrole = 'User';
+
+    await firebasefirestore
+        .collection("users")
+        .doc(user.uid)
+        .set(usermodel.toMap());
+    Fluttertoast.showToast(msg: "Account Create Successfully");
+    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>Myprofile()),
+            (route) => false);
+
   }
 }
