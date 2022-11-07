@@ -1,5 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:haatbazarv1/vendor/vendorDeleteAccount.dart';
+
+import '../model/UserData.dart';
 
 class VendorManageAccount extends StatefulWidget {
   const VendorManageAccount({Key? key}) : super(key: key);
@@ -9,6 +13,17 @@ class VendorManageAccount extends StatefulWidget {
 }
 
 class _VendorManageAccountState extends State<VendorManageAccount> {
+  User? user = FirebaseAuth.instance.currentUser;
+  UserModel loginuser = UserModel();
+
+  @override
+  void initState(){
+    super.initState();
+    FirebaseFirestore.instance.collection("users").doc(user!.uid).get().then((value){
+      this.loginuser = UserModel.formMap(value.data());
+      setState(() {});
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -22,9 +37,21 @@ class _VendorManageAccountState extends State<VendorManageAccount> {
               SizedBox(height: 15,),
               Text("Account Information",style: TextStyle(color: Colors.black45),),
               SizedBox(height: 25,),
-              Text("Phone Number"),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text("Phone Number"),
+                  Text("${loginuser.Phone}"),
+                ],
+              ),
               SizedBox(height: 30,),
-              Text("Email"),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text("Email"),
+                  Text("${loginuser.Email}"),
+                ],
+              ),
               SizedBox(height: 30,),
               Divider(color: Colors.black,),
               SizedBox(height: 20,),

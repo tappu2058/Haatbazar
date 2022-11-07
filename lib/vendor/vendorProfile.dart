@@ -1,9 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:haatbazarv1/vendor/manageAccount.dart';
 import 'package:haatbazarv1/vendor/reportProblem.dart';
 import 'package:haatbazarv1/vendor/securityAndLogin.dart';
 import 'package:haatbazarv1/vendor/vendorPrivacy.dart';
+
+import '../model/UserData.dart';
 
 class VendorProfile extends StatefulWidget {
   const VendorProfile({Key? key}) : super(key: key);
@@ -13,10 +16,19 @@ class VendorProfile extends StatefulWidget {
 }
 
 class _VendorProfileState extends State<VendorProfile> {
-  final uid = FirebaseAuth.instance.currentUser!.uid;
-  final email = FirebaseAuth.instance.currentUser!.email;
-  final phone = FirebaseAuth.instance.currentUser!.phoneNumber;
-  final fullname = FirebaseAuth.instance.currentUser!.displayName;
+  
+  User? user = FirebaseAuth.instance.currentUser;
+  UserModel loginuser = UserModel();
+  
+  @override
+  void initState(){
+    super.initState();
+    FirebaseFirestore.instance.collection("users").doc(user!.uid).get().then((value){
+      this.loginuser = UserModel.formMap(value.data());
+      setState(() {});
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -124,7 +136,7 @@ class _VendorProfileState extends State<VendorProfile> {
               ],
             ),
           ),
-          appBar: AppBar(title: Center(child: Text("$email")),
+          appBar: AppBar(title: Center(child: Text("${loginuser.Email}")),
             backgroundColor: Colors.white, foregroundColor: Colors.black,),
           body: ListView(
             padding: EdgeInsets.all(15),
@@ -134,7 +146,7 @@ class _VendorProfileState extends State<VendorProfile> {
                   child: Icon(Icons.person,size: 60,)
               ),
               Center(
-                  child: Text('$email'),
+                  child: Text("${loginuser.Fullname}"),
               ),
               SizedBox(height: 20,),
               Text("Our Products",textAlign: TextAlign.center,style: TextStyle(
