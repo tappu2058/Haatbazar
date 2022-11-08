@@ -5,6 +5,7 @@ import 'package:haatbazarv1/botton_nav_bar/forgetPass.dart';
 import 'package:haatbazarv1/botton_nav_bar/register.dart';
 import 'package:haatbazarv1/vendor/vendorBottomNav.dart';
 import '../admin/adminBottomNav.dart';
+import '../model/UserData.dart';
 import '../user/userBottomNavBar.dart';
 
 class Myprofile extends StatefulWidget {
@@ -16,6 +17,21 @@ class Myprofile extends StatefulWidget {
 
 class _MyprofileState extends State<Myprofile> {
 
+  User? user = FirebaseAuth.instance.currentUser;
+  UserModel loginuser = UserModel();
+
+  @override
+  void initState(){
+    super.initState();
+    FirebaseFirestore.instance
+        .collection("users")
+        .doc(user!.uid)
+        .get()
+        .then((value){
+      this.loginuser = UserModel.formMap(value.data());
+      setState(() {});
+    });
+  }
 
   bool _isObscure = true;
   final _formKey = GlobalKey<FormState>();
@@ -174,19 +190,31 @@ class _MyprofileState extends State<Myprofile> {
           ),
         ));
   }
+
   userloin() async{
     try{
       await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
-      if(['Wrole']=='admin'){
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>AdminBottomNav()));
+      if(('${loginuser.Wrole}') == "Admin"){
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context)=>AdminBottomNav()));
       }
-      else if(['Wrole']=='User'){
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>UserBottomNavBar()),);
+      else if(("${loginuser.Wrole}") == 'User'){
+        Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context)=>UserBottomNavBar()),);
       }
-      else {
+      else if(("${loginuser.Wrole}") == 'Vendor'){
         Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => VendorBottomNav()),
         );
+      }
+      else{
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          backgroundColor: Colors.orange,
+          content: Text('Login Failed',style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),),
+        ),);
       }
     }
     on FirebaseException catch(error){
@@ -229,7 +257,4 @@ class _MyprofileState extends State<Myprofile> {
     passwordcontroller.dispose();
     super.deactivate();
   }
-
-
-
 }

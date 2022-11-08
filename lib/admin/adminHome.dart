@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:haatbazarv1/botton_nav_bar/bottomnav.dart';
 class AdminHome extends StatefulWidget {
   const AdminHome({Key? key}) : super(key: key);
 
@@ -39,7 +40,12 @@ class _AdminHomeState extends State<AdminHome> {
 
             ListTile(
               leading: Icon(Icons.logout),
-              title: Text("Logout"),
+              title: GestureDetector(
+                onTap: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>DeaultNav()),
+                  );
+                },
+                  child: Text("Logout")),
             ),
           ],
         ),
