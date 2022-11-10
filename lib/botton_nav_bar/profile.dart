@@ -191,31 +191,49 @@ class _MyprofileState extends State<Myprofile> {
         ));
   }
 
+
+  void route() {
+    User? user = FirebaseAuth.instance.currentUser;
+    var kk = FirebaseFirestore.instance
+        .collection('users')
+        .doc(user!.uid)
+        .get()
+        .then((DocumentSnapshot documentSnapshot) {
+      if (documentSnapshot.exists) {
+        if (documentSnapshot.get('Wrole') == "Admin") {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AdminBottomNav(),
+            ),
+          );
+        }
+        else if (documentSnapshot.get('Wrole') == "Vendor") {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => VendorBottomNav(),
+            ),
+          );
+        }
+        else {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => UserBottomNavBar(),
+            ),
+          );
+        }
+      } else {
+        print('Document does not exist on the database');
+      }
+    });
+  }
+
   userloin() async{
     try{
       await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
-      if(('${loginuser.Wrole}') == "Admin"){
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context)=>AdminBottomNav()));
-      }
-      else if(("${loginuser.Wrole}") == 'User'){
-        Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context)=>UserBottomNavBar()),);
-      }
-      else if(("${loginuser.Wrole}") == 'Vendor'){
-        Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => VendorBottomNav()),
-        );
-      }
-      else{
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          backgroundColor: Colors.orange,
-          content: Text('Login Failed',style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),),
-        ),);
-      }
+      route();
     }
     on FirebaseException catch(error){
       if(error.code == 'user-not-found'){
