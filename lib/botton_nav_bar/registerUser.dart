@@ -154,7 +154,7 @@ class _RegisterUserState extends State<RegisterUser> {
                       return "Re-enter password";
                     }
                     if(value!=passwordcontroller.text){
-                      return 'Password not match';
+                      return 'Password does not match';
                     }
                     return null;
                   },
