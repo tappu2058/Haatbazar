@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:haatbazarv1/botton_nav_bar/cart.dart';
 import 'package:haatbazarv1/botton_nav_bar/home.dart';
-import 'package:haatbazarv1/botton_nav_bar/profile.dart';
 import 'package:haatbazarv1/botton_nav_bar/trending.dart';
+
+import 'login.dart';
 
 class DeaultNav extends StatefulWidget {
   const DeaultNav({Key? key}) : super(key: key);
@@ -19,7 +20,7 @@ class _MyStatefulWidgetState extends State<DeaultNav> {
     DefaultHome(),
     Mytredding(),
     Defaultcart(),
-    Myprofile(),
+    Mylogin()
   ];
 
   void _onItemTapped(int index) {
@@ -30,6 +31,7 @@ class _MyStatefulWidgetState extends State<DeaultNav> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
@@ -39,22 +41,18 @@ class _MyStatefulWidgetState extends State<DeaultNav> {
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
-            backgroundColor: Colors.pink,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.trending_up),
             label: 'Trending',
-            backgroundColor: Colors.pink,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.shopping_cart),
             label: 'Cart',
-            backgroundColor: Colors.pink,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person_outline_outlined),
             label: 'Profile',
-            backgroundColor: Colors.pink,
           ),
         ],
         currentIndex: _selectedIndex,
@@ -62,5 +60,6 @@ class _MyStatefulWidgetState extends State<DeaultNav> {
         onTap: _onItemTapped,
       ),
     );
+
   }
 }
