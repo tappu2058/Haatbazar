@@ -41,18 +41,22 @@ class _MyStatefulWidgetState extends State<DeaultNav> {
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
+            backgroundColor: Colors.pink,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.trending_up),
             label: 'Trending',
+            backgroundColor: Colors.pink,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.shopping_cart),
             label: 'Cart',
+            backgroundColor: Colors.pink,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person_outline_outlined),
             label: 'Profile',
+            backgroundColor: Colors.pink,
           ),
         ],
         currentIndex: _selectedIndex,

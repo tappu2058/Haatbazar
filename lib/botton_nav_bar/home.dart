@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:haatbazarv1/botton_nav_bar/register.dart';
+import 'all.dart';
 
 class DefaultHome extends StatefulWidget {
   const DefaultHome({Key? key}) : super(key: key);
@@ -99,6 +99,7 @@ class _DefaultHomeState extends State<DefaultHome>
                 child: TabBarView(
                   controller: _tabController,
                   children: [
+                    Allproductlist(),
                     Text("data"),
                     Text("data"),
                     Text("data"),
@@ -106,12 +107,10 @@ class _DefaultHomeState extends State<DefaultHome>
                     Text("data"),
                     Text("data"),
                     Text("data"),
-                    Register(),
                     Text("data"),
                     Text("data"),
                     Text("data"),
-                    Register(),
-
+                    Text("data"),
 
                   ],
                 ),

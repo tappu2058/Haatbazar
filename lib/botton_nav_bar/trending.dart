@@ -13,8 +13,12 @@ class _MytreddingState extends State<Mytredding> {
     return SafeArea(
         child: Scaffold(
           body: ListView(
+            padding: EdgeInsets.all(20),
             children: [
-              Text("Trending"),
+              SizedBox(height: 30,),
+              Text("No data available", style: TextStyle(
+                fontSize: 21,
+              ),),
             ],
           ),
         )

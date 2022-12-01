@@ -174,15 +174,6 @@ class _MyloginState extends State<Mylogin> {
                   ),
                 ],
               ),
-
-              SizedBox(height: 20,),
-              GestureDetector(
-                  onTap: (){
-                    Navigator.push(context,
-                      MaterialPageRoute(builder: (context)=>AdminBottomNav()),
-                    );
-                  },
-                  child: Center(child: Text("Admin"))),
             ],
           ),
           ),
