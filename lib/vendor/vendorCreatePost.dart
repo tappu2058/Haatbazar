@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
@@ -9,7 +8,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
-import '../model/addproduct.dart';
 
 
 class VendorCreatePost extends StatefulWidget {
@@ -22,6 +20,7 @@ class VendorCreatePost extends StatefulWidget {
 class _VendorCreatePostState extends State<VendorCreatePost> {
   final TextEditingController addproduct = new TextEditingController();
   final TextEditingController addprice = new TextEditingController();
+  final TextEditingController adddiscoutedprice = new TextEditingController();
   final TextEditingController addquantity = new TextEditingController();
   final TextEditingController addimage = new TextEditingController();
 
@@ -65,6 +64,11 @@ class _VendorCreatePostState extends State<VendorCreatePost> {
                       padding: EdgeInsets.all(20),
                       children: [
                         SizedBox(height: 35,),
+                        Text("Add your product",style: TextStyle(
+                          fontSize: 21,
+                          color: Colors.green
+                        ),),
+                        SizedBox(height: 20,),
                         DropdownButtonFormField(
                           decoration: InputDecoration(
                               border: OutlineInputBorder(
@@ -114,6 +118,23 @@ class _VendorCreatePostState extends State<VendorCreatePost> {
                             ),
                             hintText: 'Product Price',
                             labelText: 'Price',
+                          ),
+                        ),
+                        SizedBox(height: 15,),
+                        TextFormField(
+                          keyboardType: TextInputType.number,
+                          controller: adddiscoutedprice,
+                          validator: (value){
+                            if(value!.isEmpty){
+                              return 'Enter discounted price';
+                            }
+                          },
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15)
+                            ),
+                            hintText: 'Discounted Price',
+                            labelText: 'Discounted Price',
                           ),
                         ),
                         SizedBox(height: 15,),

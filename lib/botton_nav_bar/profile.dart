@@ -219,7 +219,7 @@ class _MyprofileState extends State<Myprofile> {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => UserBottomNavBar(),
+              builder: (context) => userDeaultNav(),
             ),
           );
         }
