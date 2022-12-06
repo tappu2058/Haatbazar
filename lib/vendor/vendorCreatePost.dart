@@ -1,12 +1,16 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+
+import '../model/addproduct.dart';
+
 
 
 
@@ -18,17 +22,18 @@ class VendorCreatePost extends StatefulWidget {
 }
 
 class _VendorCreatePostState extends State<VendorCreatePost> {
-  final TextEditingController addproduct = new TextEditingController();
+  final TextEditingController addcategory = new TextEditingController();
+  final TextEditingController addproductt = new TextEditingController();
   final TextEditingController addprice = new TextEditingController();
   final TextEditingController adddiscoutedprice = new TextEditingController();
   final TextEditingController addquantity = new TextEditingController();
   final TextEditingController addimage = new TextEditingController();
-
+  final storageRef = FirebaseStorage.instance.ref();
   final _formkey = GlobalKey<FormState>();
   final auth = FirebaseAuth.instance;
-  List<String> listitems = ["Clothes", "Agriculture","Brauty & Personal Care","Food & Beverage"
-      "Furniture","Gifts & Crafts","Electronic","Health & Medical","Machinery","Jewelry","Tools & Hardware"];
-  String selectval = "Clothes";
+  // List<String> listitems = ["Clothes", "Agriculture","Brauty & Personal Care","Food & Beverage"
+  //     "Furniture","Gifts & Crafts","Electronic","Health & Medical","Machinery","Jewelry","Tools & Hardware"];
+  // String selectval = "Clothes";
 
 
 
@@ -36,7 +41,7 @@ class _VendorCreatePostState extends State<VendorCreatePost> {
   bool loading = false;
   String base64image = "";
   File? _image;
-  firebase_storage.FirebaseStorage storage = firebase_storage.FirebaseStorage.instance;
+  // firebase_storage.FirebaseStorage storage = firebase_storage.FirebaseStorage.instance;
   DatabaseReference databaseref = FirebaseDatabase.instance.ref('CreatePost');
 
   Future _getfromgallery() async{
@@ -69,27 +74,43 @@ class _VendorCreatePostState extends State<VendorCreatePost> {
                           color: Colors.green
                         ),),
                         SizedBox(height: 20,),
-                        DropdownButtonFormField(
-                          decoration: InputDecoration(
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
-                              )
-                          ),
-                          hint: Text("Select Category"),
-                          value: selectval,
-                          onChanged: (value) {
-                            setState(() {
-                              selectval = value.toString();
-                            });
+                        // DropdownButtonFormField(
+                        //   decoration: InputDecoration(
+                        //       border: OutlineInputBorder(
+                        //         borderRadius: BorderRadius.circular(15),
+                        //       )
+                        //   ),
+                        //   hint: Text("Select Category"),
+                        //   value: selectval,
+                        //   onChanged: (value) {
+                        //     setState(() {
+                        //       selectval = value.toString();
+                        //     });
+                        //   },
+                        //   items: listitems.map((itemone) {
+                        //     return DropdownMenuItem(value: itemone, child: Text(itemone));
+                        //   }).toList(),
+                        // ),
+                        TextFormField(
+                          keyboardType: TextInputType.text,
+                          controller: addcategory,
+                          validator: (value){
+                            if(value!.isEmpty){
+                              return 'Enter category';
+                            }
                           },
-                          items: listitems.map((itemone) {
-                            return DropdownMenuItem(value: itemone, child: Text(itemone));
-                          }).toList(),
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15)
+                            ),
+                            hintText: 'category',
+                            labelText: 'category',
+                          ),
                         ),
                         SizedBox(height: 15,),
                         TextFormField(
                           keyboardType: TextInputType.text,
-                          controller: addproduct,
+                          controller: addproductt,
                           validator: (value){
                             if(value!.isEmpty){
                               return 'Enter prodect name';
@@ -172,10 +193,31 @@ class _VendorCreatePostState extends State<VendorCreatePost> {
 
                         MaterialButton(
                             color: Colors.orange,
-                            onPressed: (){
-                              post();
+                            onPressed: () async{
+                              final mountainsRef = storageRef.child(DateTime.now().millisecondsSinceEpoch.toString()+".jpg");
+                              try {
+
+                                await mountainsRef.putFile(_image!, SettableMetadata(
+                                  contentType: "image/jpeg",
+                                )).then((p0) => {
+
+                                p0.ref.getDownloadURL().then((url) => {
+                                print("Image upload link : $url"),
+                                  /// upload text code in firestore
+                                  /// {}
+                                  ///
+
+                                })
+
+                                });
+
+                              } on FirebaseException catch (e) {
+                                // ...
+                                print(e);
+                              }
+
                             },
-                            child: Text("Post",style: TextStyle(
+                            child: Text("Upload",style: TextStyle(
                                 fontSize: 19
                             ),)
                         ),
@@ -199,55 +241,32 @@ class _VendorCreatePostState extends State<VendorCreatePost> {
     );
   }
 
+  Post() async{
+    if (_formkey.currentState!.validate()) {
+      FirebaseFirestore firebasefirestore = FirebaseFirestore.instance;
+      User? user = auth.currentUser;
 
-  Future<void> post() async {
-    try{
-      if(_formkey.currentState!.validate()){
-        firebase_storage.Reference ref = firebase_storage.FirebaseStorage.instance.ref('/Addproduct/'+ '');
-        firebase_storage.UploadTask uploadtask = ref.putFile(_image!.absolute);
-        setState(() {
-          loading = false;
-        });
-        await Future.value(uploadtask);
+      Addproduct addproduct = Addproduct();
+      //writing all values
 
-        var newurl = ref.getDownloadURL();
+      addproduct.Category = addcategory.text;
+      addproduct.Uid = user?.uid;
+      addproduct.Product = addproductt.text;
+      addproduct.Proce = addprice.text;
+      addproduct.DiscountPrice = adddiscoutedprice.text;
+      addproduct.Quantity = addquantity.text;
+      addproduct.image = "$url";
 
-        databaseref.child('1').set({
-          'Category' : 'beauty',
-          'Proce' : '1234',
-          'Product' : 'Lipstick',
-          'Quantity' : '100',
-          'image' : newurl.toString()
-        });
-
-      }
-    }catch(e){
-      Fluttertoast.showToast(msg: "Uploaded");
+      await firebasefirestore
+          .collection("CreatePost")
+          .doc(user?.uid)
+          .set(addproduct.toMap());
+      Fluttertoast.showToast(msg: "Update Successfully");
+      Navigator.pushAndRemoveUntil(
+          context, MaterialPageRoute(builder: (context) => VendorCreatePost()),
+              (route) => false);
     }
-
-
   }
-  // Postimage() async{
-  //   FirebaseFirestore firebasefirestore = FirebaseFirestore.instance;
-  //   User? user = auth.currentUser;
-  //
-  //   Addproduct addproductt = Addproduct();
-  //   //writing all values
-  //
-  //   addproductt.Category;
-  //   addproductt.Uid = user?.uid;
-  //   addproductt.Product = addproduct.text;
-  //   addproductt.Proce = addprice.text;
-  //   addproductt.Quantity = addquantity.text;
-  //   addproductt.image = 'User';
-  //
-  //   await firebasefirestore
-  //       .collection("CreatePost")
-  //       .doc(user?.uid)
-  //       .set(addproduct.toMap());
-  //   Fluttertoast.showToast(msg: "Account Create Successfully");
-  //   Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>VendorCreatePost()),
-  //           (route) => false);
-  // }
+
 }
 

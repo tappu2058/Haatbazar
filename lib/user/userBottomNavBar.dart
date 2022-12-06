@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:haatbazarv1/botton_nav_bar/cart.dart';
 import 'package:haatbazarv1/botton_nav_bar/home.dart';
 import 'package:haatbazarv1/botton_nav_bar/trending.dart';
+import 'package:haatbazarv1/user/profile.dart';
 import 'package:haatbazarv1/user/trending.dart';
 
 import 'cart.dart';
@@ -23,6 +24,7 @@ class _MyStatefulWidgetState extends State<userDeaultNav> {
     userDefaultHome(),
     Usertredding(),
     UserDefaultcart(),
+    UserProfile(),
   ];
 
   void _onItemTapped(int index) {
